@@ -8,13 +8,13 @@ NVDI=double(NIR-RED)./double(NIR+RED)+0.1; %NDVI 归一化差值植被指数
 maxB=max(max(BLUE));
 maxG=max(max(GREEN));
 maxR=max(max(RED));
-dBLue=double(BLUE);
-dGREEN=double(GREEN);
-dRED=double(RED);
+dBLue=(double(BLUE)+9999*ones(7691,7531))*255/double(maxB);
+dGREEN=(double(GREEN)+9999*ones(7691,7531))*255/double(maxG);
+dRED=(double(RED)+9999*ones(7691,7531))*255/double(maxR);
 
-dI(:,:,1)=(dBLue+9999*ones(7691,7531,1))*255/double(maxB+9999);
-dI(:,:,2)=(dGREEN+9999*ones(7691,7531,1))*255/double(maxG+9999);
-dI(:,:,3)=(dRED+9999*ones(7691,7531,1))*255/double(maxR+9999);
+dI(:,:,1)=uint8(dBLue);
+dI(:,:,2)=uint8(dGREEN);
+dI(:,:,3)=uint8(dRED);
 Binary=imbinarize(NVDI);
 imshow(dI);
 %imshow(Binary);
