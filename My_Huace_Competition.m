@@ -22,7 +22,7 @@ function varargout = My_Huace_Competition(varargin)
 
 % Edit the above text to modify the response to help My_Huace_Competition
 
-% Last Modified by GUIDE v2.5 20-Mar-2018 20:30:34
+% Last Modified by GUIDE v2.5 21-Mar-2018 21:44:50
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -53,6 +53,7 @@ function My_Huace_Competition_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to My_Huace_Competition (see VARARGIN)
 axes(handles.axes1); cla; set(handles.axes1,'Visible','off');
 axes(handles.axes2); cla; set(handles.axes2,'Visible','off');
+set(handles.uipanel3,'visible','off');
 % Choose default command line output for My_Huace_Competition
 handles.output = hObject;
 
@@ -87,7 +88,13 @@ if (~FileName)% 打开文件界面按下取消
 end
 handles.FileLoad = 1;
 handles.fullPath = [PathName FileName];
-
+handles.RGB = imread(handles.fullPath);
+handles.R = handles.RGB(:,:,1);
+handles.G = handles.RGB(:,:,2);
+handles.B = handles.RGB(:,:,3);
+axes(handles.axes1); cla; imshow(handles.RGB);
+set(handles.uipanel3,'visible','off');
+guidata(hObject, handles);
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over pushbutton1.
 
@@ -97,10 +104,34 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+NVDI=double(handles.B-handles.R)./double(handles.B+handles.R)+0.1; % NDVI 表示归一化差值植被指数，加0.1是为了将负值变为正值，便于二值化选区阈值
+MNDWI=double(handles.G-handles.R)./double(handles.G+handles.R); % MNDWI表示改进的归一化差值水体指数，用来识别河流等目标
+BinaryNVDI=~imbinarize(NVDI); % 将计算结果二值化
+BinaryMNDWI=imbinarize(MNDWI);
+result = BinaryNVDI&BinaryMNDWI;
+axes(handles.axes2); cla; imshow(result);
 
 % --- Executes on button press in pushbutton3.
 function pushbutton3_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+BLUE=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band2.tif'); %读取蓝光通道
+GREEN=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band3.tif'); %读取绿光通道
+RED=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band4.tif'); %读取红光通道
+NIR=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band5.tif'); %读取红外波段反射值
+SWIR2=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band7.tif'); %读取中红外波段反射值
+NVDI=double(NIR-RED)./double(NIR+RED)+0.1; % NDVI 表示归一化差值植被指数，加0.1是为了将负值变为正值，便于二值化选区阈值
+MNDWI=double(GREEN-SWIR2)./double(NIR+SWIR2); % MNDWI表示改进的归一化差值水体指数，用来识别河流等目标
+BinaryNVDI=imbinarize(NVDI); % 将计算结果二值化
+BinaryMNDWI=imbinarize(MNDWI);
+% BinaryNVDI=imrotate(BinaryNVDI,11.2,'bilinear'); %旋转图像使其不再倾斜
+result(:,:,1)=BinaryNVDI*255;
+result(:,:,2)=BinaryNVDI*0;
+result(:,:,3)=BinaryMNDWI*255;
+I(:,:,1)=uint8(RED/8); % 将图片RGB通道数据内型转换为unsigned int8以节省内存空间
+I(:,:,2)=uint8(GREEN/8);
+I(:,:,3)=uint8(BLUE/8);
+axes(handles.axes1); cla; imshow(I);
+axes(handles.axes2); cla; imshow(result);
+set(handles.uipanel3,'visible','on');
