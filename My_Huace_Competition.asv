@@ -22,7 +22,7 @@ function varargout = My_Huace_Competition(varargin)
 
 % Edit the above text to modify the response to help My_Huace_Competition
 
-% Last Modified by GUIDE v2.5 21-Mar-2018 21:44:50
+% Last Modified by GUIDE v2.5 20-Mar-2018 20:30:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -120,6 +120,9 @@ result(:,:,3)=BinaryMNDWI*255;
 I(:,:,1)=uint8(RED/8);
 I(:,:,2)=uint8(GREEN/8);
 I(:,:,3)=uint8(BLUE/8);
-imwrite(result,'D:\huace\result.jpg');
+imshow(I);
 axes(handles.axes1); cla; imshow(I);
 axes(handles.axes2); cla; imshow(result);
+
+
+
