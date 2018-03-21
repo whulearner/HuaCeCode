@@ -104,3 +104,31 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+BLUE=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band2.tif'); %读取蓝光通道
+temp1=BLUE>=0;
+BLUE=double(BLUE).*temp1;
+GREEN=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band3.tif'); %读取绿光通道
+temp1=GREEN>=0;
+GREEN=double(GREEN).*temp1;
+RED=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band4.tif'); %读取红光通道
+temp1=RED>=0;
+RED=double(RED).*temp1;
+NIR=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band5.tif'); %读取红外波段反射值
+temp1=NIR>=0;
+NIR=double(NIR).*temp1;
+SWIR2=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band7.tif'); %读取中红外波段反射值
+temp1=SWIR2>=0;
+SWIR2=double(SWIR2).*temp1;
+NVDI=double(NIR-RED)./double(NIR+RED)+0.1; % NDVI 表示归一化差值植被指数，加0.1是为了将负值变为正值，便于二值化选区阈值
+MNDWI=double(GREEN-SWIR2)./double(NIR+SWIR2);
+BinaryNVDI=imbinarize(NVDI);
+BinaryMNDWI=imbinarize(MNDWI);
+% BinaryNVDI=imrotate(BinaryNVDI,11.2,'bilinear'); %旋转图像使其不再倾斜
+result(:,:,1)=BinaryNVDI*255;
+result(:,:,2)=BinaryNVDI*0;
+result(:,:,3)=BinaryMNDWI*255;
+axes(handles.axes1); cla; imshow(I);
+axes(handles.axes2); cla; imshow(result);
+
+
+
