@@ -22,7 +22,7 @@ function varargout = My_Huace_Competition(varargin)
 
 % Edit the above text to modify the response to help My_Huace_Competition
 
-% Last Modified by GUIDE v2.5 21-Mar-2018 21:44:50
+% Last Modified by GUIDE v2.5 22-Mar-2018 13:00:43
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -121,17 +121,25 @@ GREEN=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band3.tif'); 
 RED=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band4.tif'); %读取红光通道
 NIR=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band5.tif'); %读取红外波段反射值
 SWIR2=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band7.tif'); %读取中红外波段反射值
-NVDI=double(NIR-RED)./double(NIR+RED)+0.1; % NDVI 表示归一化差值植被指数，加0.1是为了将负值变为正值，便于二值化选区阈值
+NVDI=double(NIR-RED)./double(NIR+RED); % NDVI 表示归一化差值植被指数
 MNDWI=double(GREEN-SWIR2)./double(NIR+SWIR2); % MNDWI表示改进的归一化差值水体指数，用来识别河流等目标
-BinaryNVDI=imbinarize(NVDI); % 将计算结果二值化
+BinaryNVDI=NVDI>0.65; % 将计算结果二值化
+clear NVDI; % 及时释放内存以减少峰值内存占用
 BinaryMNDWI=imbinarize(MNDWI);
+clear MNDWI;
 % BinaryNVDI=imrotate(BinaryNVDI,11.2,'bilinear'); %旋转图像使其不再倾斜
-result(:,:,1)=BinaryNVDI*255;
-result(:,:,2)=BinaryNVDI*0;
-result(:,:,3)=BinaryMNDWI*255;
-I(:,:,1)=uint8(RED/8); % 将图片RGB通道数据内型转换为unsigned int8以节省内存空间
-I(:,:,2)=uint8(GREEN/8);
-I(:,:,3)=uint8(BLUE/8);
+I(:,:,1)=uint8(RED/10); % 将图片RGB通道数据内型转换为unsigned int8以节省内存空间
+I(:,:,2)=uint8(GREEN/10);
+I(:,:,3)=uint8(BLUE/10);
+IsCLOUD=(uint16(I(:,:,1))+uint16(I(:,:,2))+uint16(I(:,:,3)))>750;
+result(:,:,1)=uint8(BinaryNVDI*255);
+clear BinaryNVDI;
+BinaryCLOUD=imerode(IsCLOUD,strel('disk',1)); % 将云层识别结果进行二值化图像腐蚀以达到去噪效果
+clear IsCLOUD;
+result(:,:,2)=uint8(BinaryCLOUD*255);
+result(:,:,3)=uint8(BinaryMNDWI*255);
+clear BinaryMNDWI;
+% imwrite(result,'D:\huace\result.jpg'); % 将解析结果输出为jpg图片便于查看
 axes(handles.axes1); cla; imshow(I);
 axes(handles.axes2); cla; imshow(result);
 set(handles.uipanel3,'visible','on');
