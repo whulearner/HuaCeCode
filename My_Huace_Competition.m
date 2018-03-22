@@ -123,15 +123,15 @@ NIR=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band5.tif'); %¶
 SWIR2=imread('D:\huace\LC08_L1TP_122044_20180212_20180222_01_T1_sr_band7.tif'); %¶ÁÈ¡ÖĞºìÍâ²¨¶Î·´ÉäÖµ
 NVDI=double(NIR-RED)./double(NIR+RED); % NDVI ±íÊ¾¹éÒ»»¯²îÖµÖ²±»Ö¸Êı
 MNDWI=double(GREEN-SWIR2)./double(NIR+SWIR2); % MNDWI±íÊ¾¸Ä½øµÄ¹éÒ»»¯²îÖµË®ÌåÖ¸Êı£¬ÓÃÀ´Ê¶±ğºÓÁ÷µÈÄ¿±ê
-BinaryNVDI=NVDI>0.65; % ½«¼ÆËã½á¹û¶şÖµ»¯
+BinaryNVDI=NVDI>0.65; % ½«¼ÆËã½á¹û´óÓÚ0.65µÄ²¿·Ö¶¨ÎªºÜ¿ÉÄÜÊÇÍ¸Ë®ÃæµÄ²¿·Ö£¬²ÎÊı0.65µÄÑ¡¶¨ÊÇ²éÔÄ×ÊÁÏÒÔ¼°µ÷ÊÔ³ÌĞòĞŞ¸ÄµÃµ½
 clear NVDI; % ¼°Ê±ÊÍ·ÅÄÚ´æÒÔ¼õÉÙ·åÖµÄÚ´æÕ¼ÓÃ
-BinaryMNDWI=imbinarize(MNDWI);
+BinaryMNDWI=imbinarize(MNDWI); % Ë®Ïµ¿ÉÒÔÖ±½Ó¶şÖµ»¯
 clear MNDWI;
 % BinaryNVDI=imrotate(BinaryNVDI,11.2,'bilinear'); %Ğı×ªÍ¼ÏñÊ¹Æä²»ÔÙÇãĞ±
 I(:,:,1)=uint8(RED/10); % ½«Í¼Æ¬RGBÍ¨µÀÊı¾İÄÚĞÍ×ª»»Îªunsigned int8ÒÔ½ÚÊ¡ÄÚ´æ¿Õ¼ä
-I(:,:,2)=uint8(GREEN/10);
+I(:,:,2)=uint8(GREEN/10); % ²ÎÊı10µÄÑ¡¶¨ÊÇ¸ù¾İÊı¾İµÄÖ±·½Í¼·Ö²¼·ÖÎöÕÒ³ö×î´óÖµÔÚ2500×óÓÒ£¬×ª»»Îª0-255·¶Î§±È½ÏÊÊºÏ³ıÒÔ10
 I(:,:,3)=uint8(BLUE/10);
-IsCLOUD=(uint16(I(:,:,1))+uint16(I(:,:,2))+uint16(I(:,:,3)))>750;
+IsCLOUD=(uint16(I(:,:,1))+uint16(I(:,:,2))+uint16(I(:,:,3)))>750; % ÁÁ¶È¹ı¸ßµÄ²¿·Ö¶¨ÎªÔÆ²ã
 result(:,:,1)=uint8(BinaryNVDI*255);
 clear BinaryNVDI;
 BinaryCLOUD=imerode(IsCLOUD,strel('disk',1)); % ½«ÔÆ²ãÊ¶±ğ½á¹û½øĞĞ¶şÖµ»¯Í¼Ïñ¸¯Ê´ÒÔ´ïµ½È¥ÔëĞ§¹û
@@ -139,7 +139,7 @@ clear IsCLOUD;
 result(:,:,2)=uint8(BinaryCLOUD*255);
 result(:,:,3)=uint8(BinaryMNDWI*255);
 clear BinaryMNDWI;
-% imwrite(result,'D:\huace\result.jpg'); % ½«½âÎö½á¹ûÊä³öÎªjpgÍ¼Æ¬±ãÓÚ²é¿´
+% imwrite(result,'D:\huace\result2.jpg'); % ½«½âÎö½á¹ûÊä³öÎªjpgÍ¼Æ¬±ãÓÚ²é¿´
 axes(handles.axes1); cla; imshow(I);
 axes(handles.axes2); cla; imshow(result);
 set(handles.uipanel3,'visible','on');
