@@ -1,5 +1,5 @@
 # HuaCeCode  
 ## A Git try for HuaCe competition.  
 Now it's v1.2  
-加入了云层识别图层  
+璇ョ増鏈姞鍏ヤ簡浜戝眰璇嗗埆  
 Mar.17 it's only v0.1
