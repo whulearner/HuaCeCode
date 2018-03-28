@@ -22,7 +22,7 @@ function varargout = My_Huace_Competition(varargin)
 
 % Edit the above text to modify the response to help My_Huace_Competition
 
-% Last Modified by GUIDE v2.5 23-Mar-2018 16:17:00
+% Last Modified by GUIDE v2.5 27-Mar-2018 20:10:30
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -154,7 +154,7 @@ clear IsCLOUD; % 及时释放内存以减少峰值内存占用
 result(:,:,2)=uint8(BinaryCLOUD*255);
 result(:,:,3)=uint8(BinaryMNDWI*255);
 clear BinaryMNDWI; % 及时释放内存以减少峰值内存占用
-% imwrite(result,'D:\huace\result.jpg'); % 将解析结果输出为jpg图片
+% imwrite(I,'D:\huace\RGB.jpg'); % 将解析结果输出为jpg图片
 axes(handles.axes1); cla; imshow(I);
 axes(handles.axes2); cla; imshow(result);
 set(handles.uipanel3,'visible','on');
@@ -193,6 +193,7 @@ set(hObject,'Min', 0.001);
 set(hObject,'Max', 0.3);
 handles.slidevalue = get(hObject,'Value');
 handles.isslide = 1;
+set(handles.edit2,'String',handles.slidevalue*3.33);
 guidata(hObject, handles);
 if handles.realtime
 pushbutton2_Callback(hObject, eventdata, handles);
@@ -222,3 +223,26 @@ function checkbox1_Callback(hObject, eventdata, handles)
 handles.realtime = get(hObject,'Value');
 guidata(hObject, handles);
 % Hint: get(hObject,'Value') returns toggle state of checkbox1
+
+
+
+function edit2_Callback(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit2 as text
+%        str2double(get(hObject,'String')) returns contents of edit2 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
